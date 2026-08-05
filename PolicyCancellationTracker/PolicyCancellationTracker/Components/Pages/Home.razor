@@ -1,0 +1,65 @@
+﻿@page "/"
+
+@using PolicyCancellationTracker.Models
+@using PolicyCancellationTracker.Components
+@using PolicyCancellationTracker.Services
+
+@inject CancellationService CancellationService
+
+<PageTitle>Policy Cancellation Tracker</PageTitle>
+
+<div class="page-heading">
+    <div>
+        <h1>Cancellation Dashboard</h1>
+        <p>Review current policy cancellation activity</p>
+    </div>
+
+    <a href="" class="primary-button">
+        Search Policies
+    </a>
+</div>
+
+<section class="content">
+    <div class="content-heading">
+        <h2>Recent Cancellation Records</h2>
+        <p>Select a policy to view its details</p>
+    </div>
+    
+    <div class="table-container">
+        <table class="table-data">
+            <thead>
+            <tr>
+                <th>Policy Number</th>
+                <th>Insured</th>
+                <th>Cancellation Date</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            </thead>
+            
+            <tbody>
+            @foreach (CancellationRecord record in RecentRecords)
+            {
+                <tr>
+                    <td><strong>@record.PolicyNumber</strong></td>
+                    <td>@record.InsuredName</td>
+                    <td>@record.CancellationDate.ToString("MM/dd/yyyy")</td>
+                    <td>@record.CancellationReason</td>
+                    <td>@record.Status</td>
+                    <td>
+                        <a href="/policy/@record.Id" class="secondary-button">View</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</section>
+
+@code {
+
+    private IEnumerable<CancellationRecord> RecentRecords =>
+        CancellationService.GetRecords()
+            .OrderByDescending(record => record.CancellationDate);
+}
