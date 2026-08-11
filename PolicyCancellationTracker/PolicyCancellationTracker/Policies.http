@@ -1,0 +1,2 @@
+GET http://localhost:5284/policies
+Accept: application/json

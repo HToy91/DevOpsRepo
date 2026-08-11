@@ -1,10 +1,8 @@
 ﻿@page "/"
 
 @using PolicyCancellationTracker.Models
-@using PolicyCancellationTracker.Components
-@using PolicyCancellationTracker.Services
 
-@inject CancellationService CancellationService
+@inject IHttpClientFactory HttpClientFactory
 
 <PageTitle>Policy Cancellation Tracker</PageTitle>
 
@@ -39,7 +37,7 @@
             </thead>
             
             <tbody>
-            @foreach (CancellationRecord record in RecentRecords)
+            @foreach (CancellationRecord record in _recentRecords)
             {
                 <tr>
                     <td><strong>@record.PolicyNumber</strong></td>
@@ -58,8 +56,20 @@
 </section>
 
 @code {
+    private List<CancellationRecord> _recentRecords = new();
 
-    private IEnumerable<CancellationRecord> RecentRecords =>
-        CancellationService.GetRecords()
-            .OrderByDescending(record => record.CancellationDate);
+    protected override async Task OnInitializedAsync()
+    {
+        var http = HttpClientFactory.CreateClient("PolicyApi");
+        var records =
+            await http.GetFromJsonAsync<List<CancellationRecord>>("/policies");
+
+        if (records != null)
+        {
+            _recentRecords = records
+                .OrderByDescending(record => record.CancellationDate)
+                .ToList();
+        }
+    }
+
 }

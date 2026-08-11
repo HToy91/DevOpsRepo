@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PolicyCancellationTracker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b60c79918b7ba8f0fa5ee1cd33f1aefb2324d35")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d6e0112312b2c9153663596890dc5af89c2c38a3")]
 [assembly: System.Reflection.AssemblyProductAttribute("PolicyCancellationTracker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PolicyCancellationTracker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
