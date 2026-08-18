@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PolicyCancellationTracker.Data;
 using PolicyCancellationTracker.Models;
-using PolicyCancellationTracker.Services;
 
 namespace PolicyCancellationTracker.Controllers;
 
@@ -8,18 +9,19 @@ namespace PolicyCancellationTracker.Controllers;
 [Route("[controller]")]
 public class PoliciesController : ControllerBase
 {
-    private readonly CancellationService _cancellationService;
-    
-    public PoliciesController(CancellationService cancellationService)
+    private readonly ApplicationDbContext _context;
+
+    public PoliciesController(ApplicationDbContext context)
     {
-        _cancellationService = cancellationService;
+        _context = context;
     }
 
     [HttpGet]
-    public IActionResult GetPolicies()
+    public async Task<IActionResult> GetPolicies()
     {
-        var records = _cancellationService.GetRecords();
-        
+        List<CancellationRecord> records =
+            await _context.CancellationRecords.ToListAsync();
+
         return Ok(records);
     }
 }
