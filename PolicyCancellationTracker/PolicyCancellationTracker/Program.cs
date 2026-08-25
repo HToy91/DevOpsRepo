@@ -13,7 +13,11 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<CancellationService>();
 builder.Services.AddHttpClient("PolicyApi", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:5284");
+    string baseUrl =
+        builder.Configuration["PolicyApiBaseUrl"]
+        ?? "http://localhost:5284";
+
+    client.BaseAddress = new Uri(baseUrl);
 });
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(

@@ -24,4 +24,18 @@ public class PoliciesController : ControllerBase
 
         return Ok(records);
     }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetPolicy(int id)
+    {
+        CancellationRecord? record =
+            await _context.CancellationRecords.FindAsync(id);
+
+        if (record == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(record);
+    }
 }

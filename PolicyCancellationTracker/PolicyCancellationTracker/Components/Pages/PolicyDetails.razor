@@ -1,6 +1,43 @@
 @page "/policy/{Id:int}"
 
 @using PolicyCancellationTracker.Models
-@using PolicyCancellationTracker.Services
+@inject IHttpClientFactory HttpClientFactory
 
-@inject CancellationService CancellationService
+<h1>Policy Details</h1>
+
+@if (policy == null)
+{
+    <p>Loading policy...</p>
+}
+else
+{
+    <div>
+        <p><strong>Policy Number:</strong> @policy.PolicyNumber</p>
+        <p><strong>Insured:</strong> @policy.InsuredName</p>
+        <p><strong>Policy Type:</strong> @policy.PolicyType</p>
+        <p><strong>Effective Date:</strong> @policy.EffectiveDate.ToShortDateString()</p>
+        <p><strong>Expiration Date:</strong> @policy.ExpirationDate.ToShortDateString()</p>
+        <p><strong>Cancellation Date:</strong> @policy.CancellationDate.ToShortDateString()</p>
+        <p><strong>Reason:</strong> @policy.CancellationReason</p>
+        <p><strong>Amount Due:</strong> @policy.AmountDue.ToString("C")</p>
+        <p><strong>Status:</strong> @policy.Status</p>
+        <p><strong>Notes:</strong> @policy.Notes</p>
+    </div>
+
+    <a href="/">Back to Dashboard</a>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private CancellationRecord? policy;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var client = HttpClientFactory.CreateClient("PolicyApi");
+
+        policy = await client.GetFromJsonAsync<CancellationRecord>(
+            $"/policies/{Id}");
+    }
+}

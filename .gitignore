@@ -1,0 +1,13 @@
+# .NET build files
+**/bin/
+**/obj/
+
+# Environment/secrets
+.env
+.env.*
+!.env.example
+
+# IDE files
+.idea/
+.vscode/
+.DS_Store
