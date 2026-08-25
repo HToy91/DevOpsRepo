@@ -1,9 +1,10 @@
 @page "/policy/{Id:int}"
 
+@using System.Globalization
 @using PolicyCancellationTracker.Models
 @inject IHttpClientFactory HttpClientFactory
 
-<h1>Policy Details</h1>
+<PageTitle>Policy Details</PageTitle>
 
 @if (policy == null)
 {
@@ -11,20 +12,82 @@
 }
 else
 {
-    <div>
-        <p><strong>Policy Number:</strong> @policy.PolicyNumber</p>
-        <p><strong>Insured:</strong> @policy.InsuredName</p>
-        <p><strong>Policy Type:</strong> @policy.PolicyType</p>
-        <p><strong>Effective Date:</strong> @policy.EffectiveDate.ToShortDateString()</p>
-        <p><strong>Expiration Date:</strong> @policy.ExpirationDate.ToShortDateString()</p>
-        <p><strong>Cancellation Date:</strong> @policy.CancellationDate.ToShortDateString()</p>
-        <p><strong>Reason:</strong> @policy.CancellationReason</p>
-        <p><strong>Amount Due:</strong> @policy.AmountDue.ToString("C")</p>
-        <p><strong>Status:</strong> @policy.Status</p>
-        <p><strong>Notes:</strong> @policy.Notes</p>
+    <div class="page-heading">
+        <div>
+            <h1>Policy Details</h1>
+            <p>Review all cancellation information for this policy.</p>
+        </div>
+
+        <a href="/" class="secondary-button">
+            Back
+        </a>
     </div>
 
-    <a href="/">Back to Dashboard</a>
+    <div class="details-card">
+
+        <div class="detail-row">
+            <strong>ID</strong>
+            <span>@policy.Id</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Policy Number</strong>
+            <span>@policy.PolicyNumber</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Insured Name</strong>
+            <span>@policy.InsuredName</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Policy Type</strong>
+            <span>@policy.PolicyType</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Effective Date</strong>
+            <span>@policy.EffectiveDate.ToString("MM/dd/yyyy")</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Expiration Date</strong>
+            <span>@policy.ExpirationDate.ToString("MM/dd/yyyy")</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Cancellation Date</strong>
+            <span>@policy.CancellationDate.ToString("MM/dd/yyyy")</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Notice Date</strong>
+            <span>
+                @(policy.NoticeDate?.ToString("MM/dd/yyyy") ?? "No notice date")
+            </span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Cancellation Reason</strong>
+            <span>@policy.CancellationReason</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Amount Due</strong>
+            <span>@policy.AmountDue.ToString("C", CultureInfo.GetCultureInfo(("en-US")))</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Status</strong>
+            <span>@policy.Status</span>
+        </div>
+
+        <div class="detail-row">
+            <strong>Notes</strong>
+            <span>@policy.Notes</span>
+        </div>
+
+    </div>
 }
 
 @code {
@@ -35,9 +98,11 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        var client = HttpClientFactory.CreateClient("PolicyApi");
+        var client =
+            HttpClientFactory.CreateClient("PolicyApi");
 
-        policy = await client.GetFromJsonAsync<CancellationRecord>(
-            $"/policies/{Id}");
+        policy =
+            await client.GetFromJsonAsync<CancellationRecord>(
+                $"/policies/{Id}");
     }
 }

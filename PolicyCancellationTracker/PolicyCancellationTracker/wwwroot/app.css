@@ -174,3 +174,32 @@ h1:focus {
     color: #6c757d;
     font-size: .95rem;
 }
+
+
+
+
+.details-card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detail-row {
+    display: flex;
+    padding: 14px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row strong {
+    width: 220px;
+    color: #1f4e79;
+}
+
+.detail-row span {
+    flex: 1;
+}
