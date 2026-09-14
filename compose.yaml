@@ -9,9 +9,6 @@ services:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
 
-    ports:
-      - "1433:1433"
-
     volumes:
       - policy-db-data:/var/opt/mssql
 
@@ -76,8 +73,7 @@ services:
       PolicyApiBaseUrl: "http://localhost:8080"
 
     ports:
-      - "5284:8080"
-
+      - "${APP_PORT:-5284}:8080"
 
 volumes:
   policy-db-data:
