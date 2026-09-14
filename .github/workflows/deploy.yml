@@ -1,0 +1,45 @@
+name: Deploy
+
+on:
+  workflow_run: 
+    workflows: ["Build and test containers"]
+    types:
+      - completed
+    
+jobs:
+  deploy:
+    name: Deploy to server
+    runs-on: ubuntu-latest
+    
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Deploy application
+        uses: appleboy/ssh-action@v1
+        env:
+          MSSQL_SA_PASSWORD: ${{ secrets.MSSQL_SA_PASSWORD }}
+          SUDO_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          envs: MSSQL_SA_PASSWORD,SUDO_PASSWORD
+          script: |
+            echo "Deployment starting"
+            
+            cd ~
+            if [ ! -d "DevOpsRepo" ]; then
+              git clone https://github.com/HToy91/DevOpsRepo.git
+            fi
+            
+            cd DevOpsRepo
+            git pull origin main
+            
+            export APP_PORT=90
+            export MSSQL_SA_PASSWORD="$MSSQL_SA_PASSWORD"
+            
+            echo "$SUDO_PASSWORD" | sudo -S -E docker compose down
+            echo "$SUDO_PASSWORD" | sudo -S -E docker compose up --build -d
