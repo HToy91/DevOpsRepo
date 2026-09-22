@@ -1,0 +1,140 @@
+@page "/create"
+
+@using PolicyCancellationTracker.Models
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create Cancellation Record</PageTitle>
+
+<div class="page-heading">
+    <div>
+        <h1>Create Cancellation Record</h1>
+        <p>Add a new policy cancellation record</p>
+    </div>
+</div>
+
+<section class="content">
+    <div class="form-card">
+
+        <div class="content-heading">
+            <h2>Policy Information</h2>
+            <p>Enter the information for the cancellation record</p>
+        </div>
+
+        <EditForm Model="_record" OnValidSubmit="SubmitPolicy">
+            <DataAnnotationsValidator />
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Policy Number</label>
+                    <InputText class="form-input"
+                               @bind-Value="_record.PolicyNumber" />
+                </div>
+
+                <div class="form-group">
+                    <label>Insured Name</label>
+                    <InputText class="form-input"
+                               @bind-Value="_record.InsuredName" />
+                </div>
+
+                <div class="form-group">
+                    <label>Policy Type</label>
+                    <InputSelect class="form-input" @bind-Value="_record.PolicyType">
+                        <option value="">Select Policy Type</option>
+                        <option value="Auto">Auto</option>
+                        <option value="Home">Home</option>
+                        <option value="Renters">Renters</option>
+                        <option value="Commercial">Commercial</option>
+                    </InputSelect>
+                </div>
+
+                <div class="form-group">
+                    <label>Status</label>
+                    <InputSelect class="form-input" @bind-Value="_record.Status">
+                        <option value="">Select Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Cancelled">Cancelled</option>
+                        <option value="Resolved">Resolved</option>
+                    </InputSelect>
+                </div>
+
+                <div class="form-group">
+                    <label>Effective Date</label>
+                    <InputDate class="form-input"
+                               @bind-Value="_record.EffectiveDate" />
+                </div>
+
+                <div class="form-group">
+                    <label>Expiration Date</label>
+                    <InputDate class="form-input"
+                               @bind-Value="_record.ExpirationDate" />
+                </div>
+
+                <div class="form-group">
+                    <label>Cancellation Date</label>
+                    <InputDate class="form-input"
+                               @bind-Value="_record.CancellationDate" />
+                </div>
+                
+                <div class="form-group">
+                    <label>Notice Date</label>
+                    <InputDate class="form-input"
+                               @bind-Value="_record.NoticeDate" />
+                </div>
+
+                <div class="form-group">
+                    <label>Amount Due</label>
+                    <InputNumber class="form-input"
+                                 @bind-Value="_record.AmountDue" />
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Cancellation Reason</label>
+                    <InputText class="form-input"
+                               @bind-Value="_record.CancellationReason" />
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Notes</label>
+                    <InputTextArea class="form-input form-textarea"
+                                   @bind-Value="_record.Notes" />
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <a href="/" class="secondary-button">Cancel</a>
+
+                <button type="submit" class="primary-button">
+                    Create Record
+                </button>
+            </div>
+
+        </EditForm>
+
+    </div>
+</section>
+
+@code {
+    private CancellationRecord _record = new()
+    {
+        EffectiveDate = DateTime.Today,
+        ExpirationDate = DateTime.Today,
+        CancellationDate = DateTime.Today,
+        NoticeDate = DateTime.Today
+    };
+
+    private async Task SubmitPolicy()
+    {
+        var http = HttpClientFactory.CreateClient("PolicyApi");
+
+        var response =
+            await http.PostAsJsonAsync("/policies", _record);
+
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+}

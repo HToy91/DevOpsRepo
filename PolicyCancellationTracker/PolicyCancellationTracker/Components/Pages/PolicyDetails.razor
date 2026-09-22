@@ -18,9 +18,28 @@ else
             <p>Review all cancellation information for this policy.</p>
         </div>
 
-        <a href="/" class="secondary-button">
-            Back
-        </a>
+        <div>
+            <a href="/" class="secondary-button">
+                Back
+            </a>
+
+            @if (!isEditing)
+            {
+                <button class="primary-button" @onclick="EnableEdit">
+                    Edit
+                </button>
+            }
+            else
+            {
+                <button class="primary-button" @onclick="SavePolicy">
+                    Save
+                </button>
+
+                <button class="secondary-button" @onclick="CancelEdit">
+                    Cancel
+                </button>
+            }
+        </div>
     </div>
 
     <div class="details-card">
@@ -32,59 +51,172 @@ else
 
         <div class="detail-row">
             <strong>Policy Number</strong>
-            <span>@policy.PolicyNumber</span>
+
+            @if (isEditing)
+            {
+                <InputText class="form-input"
+                           @bind-Value="policy.PolicyNumber" />
+            }
+            else
+            {
+                <span>@policy.PolicyNumber</span>
+            }
         </div>
 
         <div class="detail-row">
             <strong>Insured Name</strong>
-            <span>@policy.InsuredName</span>
+
+            @if (isEditing)
+            {
+                <InputText class="form-input"
+                           @bind-Value="policy.InsuredName" />
+            }
+            else
+            {
+                <span>@policy.InsuredName</span>
+            }
         </div>
 
         <div class="detail-row">
             <strong>Policy Type</strong>
-            <span>@policy.PolicyType</span>
+
+            @if (isEditing)
+            {
+                <InputSelect class="form-input"
+                             @bind-Value="policy.PolicyType">
+                    <option value="Auto">Auto</option>
+                    <option value="Home">Home</option>
+                    <option value="Renters">Renters</option>
+                    <option value="Commercial">Commercial</option>
+                </InputSelect>
+            }
+            else
+            {
+                <span>@policy.PolicyType</span>
+            }
         </div>
 
         <div class="detail-row">
             <strong>Effective Date</strong>
-            <span>@policy.EffectiveDate.ToString("MM/dd/yyyy")</span>
+
+            @if (isEditing)
+            {
+                <InputDate class="form-input"
+                           @bind-Value="policy.EffectiveDate" />
+            }
+            else
+            {
+                <span>@policy.EffectiveDate.ToString("MM/dd/yyyy")</span>
+            }
         </div>
 
         <div class="detail-row">
             <strong>Expiration Date</strong>
-            <span>@policy.ExpirationDate.ToString("MM/dd/yyyy")</span>
+
+            @if (isEditing)
+            {
+                <InputDate class="form-input"
+                           @bind-Value="policy.ExpirationDate" />
+            }
+            else
+            {
+                <span>@policy.ExpirationDate.ToString("MM/dd/yyyy")</span>
+            }
         </div>
 
         <div class="detail-row">
             <strong>Cancellation Date</strong>
-            <span>@policy.CancellationDate.ToString("MM/dd/yyyy")</span>
+
+            @if (isEditing)
+            {
+                <InputDate class="form-input"
+                           @bind-Value="policy.CancellationDate" />
+            }
+            else
+            {
+                <span>@policy.CancellationDate.ToString("MM/dd/yyyy")</span>
+            }
         </div>
 
         <div class="detail-row">
             <strong>Notice Date</strong>
-            <span>
-                @(policy.NoticeDate?.ToString("MM/dd/yyyy") ?? "No notice date")
-            </span>
+
+            @if (isEditing)
+            {
+                <InputDate class="form-input"
+                           @bind-Value="policy.NoticeDate" />
+            }
+            else
+            {
+                <span>
+                    @(policy.NoticeDate?.ToString("MM/dd/yyyy")
+                        ?? "No notice date")
+                </span>
+            }
         </div>
 
         <div class="detail-row">
             <strong>Cancellation Reason</strong>
-            <span>@policy.CancellationReason</span>
+
+            @if (isEditing)
+            {
+                <InputText class="form-input"
+                           @bind-Value="policy.CancellationReason" />
+            }
+            else
+            {
+                <span>@policy.CancellationReason</span>
+            }
         </div>
 
         <div class="detail-row">
             <strong>Amount Due</strong>
-            <span>@policy.AmountDue.ToString("C", CultureInfo.GetCultureInfo(("en-US")))</span>
+
+            @if (isEditing)
+            {
+                <InputNumber class="form-input"
+                             @bind-Value="policy.AmountDue" />
+            }
+            else
+            {
+                <span>
+                    @policy.AmountDue.ToString(
+                        "C",
+                        CultureInfo.GetCultureInfo("en-US"))
+                </span>
+            }
         </div>
 
         <div class="detail-row">
             <strong>Status</strong>
-            <span>@policy.Status</span>
+
+            @if (isEditing)
+            {
+                <InputSelect class="form-input"
+                             @bind-Value="policy.Status">
+                    <option value="Pending">Pending</option>
+                    <option value="Cancelled">Cancelled</option>
+                    <option value="Resolved">Resolved</option>
+                </InputSelect>
+            }
+            else
+            {
+                <span>@policy.Status</span>
+            }
         </div>
 
         <div class="detail-row">
             <strong>Notes</strong>
-            <span>@policy.Notes</span>
+
+            @if (isEditing)
+            {
+                <InputTextArea class="form-input form-textarea"
+                               @bind-Value="policy.Notes" />
+            }
+            else
+            {
+                <span>@policy.Notes</span>
+            }
         </div>
 
     </div>
@@ -95,6 +227,7 @@ else
     public int Id { get; set; }
 
     private CancellationRecord? policy;
+    private bool isEditing = false;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -104,5 +237,43 @@ else
         policy =
             await client.GetFromJsonAsync<CancellationRecord>(
                 $"/policies/{Id}");
+    }
+
+    private void EnableEdit()
+    {
+        isEditing = true;
+    }
+
+    private async Task SavePolicy()
+    {
+        if (policy == null)
+        {
+            return;
+        }
+
+        var client =
+            HttpClientFactory.CreateClient("PolicyApi");
+
+        var response =
+            await client.PutAsJsonAsync(
+                $"/policies/{policy.Id}",
+                policy);
+
+        if (response.IsSuccessStatusCode)
+        {
+            isEditing = false;
+        }
+    }
+
+    private async Task CancelEdit()
+    {
+        var client =
+            HttpClientFactory.CreateClient("PolicyApi");
+
+        policy =
+            await client.GetFromJsonAsync<CancellationRecord>(
+                $"/policies/{Id}");
+
+        isEditing = false;
     }
 }

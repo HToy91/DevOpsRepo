@@ -12,8 +12,8 @@
         <p>Review current policy cancellation activity</p>
     </div>
 
-    <a href="" class="primary-button">
-        Search Policies
+    <a href="/create" class="primary-button">
+        Create Policy
     </a>
 </div>
 
@@ -47,6 +47,7 @@
                     <td>@record.Status</td>
                     <td>
                         <a href="/policy/@record.Id" class="secondary-button">View</a>
+                        <button class="secondary-button" @onclick="() => DeletePolicy(record.Id)">Delete</button>
                     </td>
                 </tr>
             }
@@ -71,5 +72,14 @@
                 .ToList();
         }
     }
-
+    private async Task DeletePolicy(int id)
+    {
+        var http = HttpClientFactory.CreateClient("PolicyApi");
+        var response = await http.DeleteAsync($"/policies/{id}");
+        
+        if (response.IsSuccessStatusCode)
+        {
+            _recentRecords.RemoveAll(record => record.Id == id);
+        }
+    }
 }

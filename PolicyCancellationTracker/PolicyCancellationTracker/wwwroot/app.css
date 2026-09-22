@@ -203,3 +203,70 @@ h1:focus {
 .detail-row span {
     flex: 1;
 }
+
+
+
+
+
+
+.form-card {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 7px;
+    font-weight: 600;
+    color: #1f4e79;
+}
+
+.form-input {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #1f4e79;
+    box-shadow: 0 0 0 2px rgba(31, 78, 121, 0.15);
+}
+
+.form-textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.form-actions a {
+    text-decoration: none;
+}
