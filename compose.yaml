@@ -9,9 +9,6 @@ services:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
 
-    ports:
-      - "${DB_PORT:-1433}:1433"
-
     volumes:
       - policy-db-data:/var/opt/mssql
 
