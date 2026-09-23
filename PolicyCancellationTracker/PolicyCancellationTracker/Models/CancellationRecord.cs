@@ -18,4 +18,5 @@ public class CancellationRecord
     public decimal AmountDue { get; set; }
     public string Status { get; set; } = string.Empty;
     public string Notes { get; set; } = string.Empty;
+    // this is a test
 }
